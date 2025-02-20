@@ -34,7 +34,8 @@ document.getElementById('files').addEventListener('change', parseFiles);
  * Process assignment files and users file.
  */
 function parseFiles(e) {
-    
+    studentRows = [];
+    studentsWithoutGit = [];
     headers = [];
     taskCount = 0;
     let files = [...e.currentTarget.files];
@@ -129,9 +130,10 @@ function getTasks(event) {
             student.points[taskCount] = p;
             student.sum += p;
         } else {
-            let newStudent = { gitName, name: '', points: Array(taskFiles.length).fill(0), sum: 0 };
-            newStudent.points[taskCount] = p;
-            studentRows.push(newStudent);
+            student = { gitName, name: '', points: Array(taskFiles.length).fill(0), sum: 0 };
+            student.points[taskCount] = p;
+            student.sum += p;
+            studentRows.push(student);
         }
 
     }
