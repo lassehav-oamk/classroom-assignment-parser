@@ -14,6 +14,8 @@ const LNAME_INDEX = 0;
 const FNAME_INDEX = 1;
 const GIT_USER_INDEX = 2;
 
+document.getElementById('files').addEventListener('change', parseFiles);
+
 //Setting the table order if changed.
 document.querySelector('#ordernames').addEventListener('click', setOrder);
 document.querySelector('#orderpoints').addEventListener('click', setOrder);
@@ -27,8 +29,6 @@ function setOrder(e){
     createTable();
 }
 
-
-document.getElementById('files').addEventListener('change', parseFiles);
 
 /**
  * Process assignment files and users file.
