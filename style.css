@@ -1,0 +1,32 @@
+tr:nth-child(even){background-color: #f2f2f2;}
+
+thead td{
+    background-color: orange;
+    font-weight: bold
+}
+
+td:first-child,td:nth-child(2){
+    text-align: left;
+    font-weight: bold;
+}
+
+td:last-child{
+    font-weight: bold;
+}
+
+td{
+    padding: 0.2em 0.5em 0.2em 0.5em;
+    border: 1px solid black;
+    text-align: center;
+}
+
+button{
+    margin: 0.5em;
+}
+
+table{
+    margin: 1em;
+}
+#toprow{
+    margin: 1em;
+}
