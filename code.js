@@ -29,7 +29,6 @@ function setOrder(e){
     createTable();
 }
 
-
 /**
  * Process assignment files and users file.
  */
@@ -58,7 +57,6 @@ function parseFiles(e) {
     }
 }
 
-
 /**
  * Parses the users from users file.
  */
@@ -68,6 +66,7 @@ function getUsers(event) {
 
     userRows.forEach(r => {
         let userArray = r.split(',');
+
         //Omitting empty row
         if (userArray.length < 3) {
             return;
@@ -75,7 +74,6 @@ function getUsers(event) {
 
         let gitName = userArray[GIT_USER_INDEX]?.trim();
         let name = userArray[LNAME_INDEX] + ' ' + userArray[FNAME_INDEX];
-
 
         let studentTarget = gitName.length > 0 ? studentRows : studentsWithoutGit;
         studentTarget.push({ gitName, name, points: Array(taskQuantity).fill(0), sum: 0 });
@@ -164,7 +162,6 @@ function createTable() {
     } else {
         tableRows.sort((x, y) => x.name.localeCompare(y.name))
     }
-
 
     for (const student of tableRows) {
         let row = table.insertRow();
