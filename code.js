@@ -15,8 +15,7 @@ const FNAME_INDEX = 1;
 const GIT_USER_INDEX = 2;
 
 document.getElementById('files').addEventListener('change', parseFiles);
-
-//Setting the table order if changed.
+document.querySelector('#export').addEventListener('click', exportCsv);
 document.querySelector('#ordernames').addEventListener('click', setOrder);
 document.querySelector('#orderpoints').addEventListener('click', setOrder);
 document.querySelector('#gitnames').addEventListener('click', ()=> {
@@ -187,4 +186,33 @@ function createTable() {
         thead.insertCell().textContent = h;
     })
     thead.insertCell().textContent = 'Sum';
+}
+
+
+/**
+ * Exports table data to CSV
+ */
+function exportCsv(){
+    let tableRows = studentRows;
+    if(showStudentsWithoutGit){
+        tableRows = [...tableRows, ...studentsWithoutGit];
+    }
+
+    let fileString = '\ufeffName,Git username';
+    headers.forEach(h => fileString += `,${h}`);
+    fileString += ',Sum\n';
+    
+    for (const student of tableRows) {
+        fileString += student.name;
+        fileString += ',' + student.gitName;
+        student.points.forEach( p => fileString += ',' + p);
+        fileString += ',' + student.sum + '\n';
+    }
+
+    let b = new Blob([fileString], {type: 'text/csv'});
+    const link = document.createElement('a');
+    link.download = 'clasroom'+Date.now();
+    link.href = URL.createObjectURL(b);
+    link.click();
+
 }
