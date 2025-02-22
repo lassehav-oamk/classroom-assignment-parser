@@ -169,8 +169,8 @@ function createTable() {
             row.insertCell().textContent = student.name;
         }
         row.insertCell().textContent = student.gitName;
-        student.points.forEach(p => row.insertCell().textContent = p);
         row.insertCell().textContent = student.sum;
+        student.points.forEach(p => row.insertCell().textContent = p);
     }
 
     //Create table headers
@@ -178,14 +178,18 @@ function createTable() {
     let thead = table.createTHead().insertRow();
 
     if (usersExist) {
+        table.classList.add('users')
         thead.insertCell().textContent = 'Name';
+    }else{
+        table.classList.remove('users');
     }
 
     thead.insertCell().textContent = 'Git name';
+    thead.insertCell().textContent = 'Sum';
     headers.forEach(h => {
         thead.insertCell().textContent = h;
     })
-    thead.insertCell().textContent = 'Sum';
+    
 }
 
 

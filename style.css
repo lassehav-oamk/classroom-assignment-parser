@@ -3,16 +3,25 @@ tr:nth-child(even){background-color: #f2f2f2;}
 thead td{
     background-color: orange;
     font-weight: bold
+}   
+
+/* Style for sums if there's name column */
+table.users tbody td:nth-child(3){
+    font-weight: bold;
+    background-color: #f6e84b;
 }
 
-td:first-child,td:nth-child(2){
+/* Style for sums (second column) if there's no name column */
+tbody td:nth-child(2):not(table.users td){
+    background-color: #f6e84b;
+    text-align: center;
+}
+
+td:nth-child(-n+2){
+    font-weight: bold;
     text-align: left;
-    font-weight: bold;
 }
 
-td:last-child{
-    font-weight: bold;
-}
 
 td{
     padding: 0.2em 0.5em 0.2em 0.5em;
