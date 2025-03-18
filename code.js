@@ -81,6 +81,7 @@ function getPeppiUsers(event) {
 
         studentRows.push({ name, studentEmail, studentId, points: Array(taskQuantity).fill(0), sum: 0 });
     }
+    debugger
 
     //Processing task files after peppiUsers.csv is parsed 
     processTaskFiles();
@@ -219,13 +220,19 @@ function exportCsv(){
         tableRows = [...tableRows, ...studentsWithoutGit];
     }
 
-    let fileString = '\ufeffName,Git username';
-    headers.forEach(h => fileString += `,${h}`);
-    fileString += ',Sum\n';
+    let fileString = '\ufeff';
+    fileString += 'Name,';
+    fileString += 'Git username,';
+    fileString += 'Student email,';
+    fileString += 'Student id,';
+    headers.forEach(h => fileString += `${h},`);
+    fileString += 'Sum\n';
     
     for (const student of tableRows) {
         fileString += student.name;
         fileString += ',' + student.gitName;
+        fileString += ',' + student.studentEmail;
+        fileString += ',' + student.studentId;
         student.points.forEach( p => fileString += ',' + p);
         fileString += ',' + student.sum + '\n';
     }
