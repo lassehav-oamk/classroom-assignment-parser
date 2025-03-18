@@ -14,7 +14,14 @@
 <body>
     <div>
         <div id="toprow">
-            <input class="form-control" type="file" name="files" id="files" multiple>
+            <div>
+                Task Files: <br>
+                <input class="form-control" type="file" name="taskFiles" id="taskFiles" multiple>
+            </div>
+            <div>
+                Peppi course enrollment csv file: <br>
+                <input class="form-control" type="file" name="userFiles" id="userFiles">
+            </div>
             <div class="btn-group" role="group" aria-label="Basic example">
                 <button type="button" class="btn btn-primary" id="ordernames">By Name</button>
                 <button type="button" class="btn btn-primary" id="orderpoints">By points</button>

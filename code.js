@@ -8,13 +8,11 @@ let taskCount = 0;
 let studentsWithoutGit = [];
 let showStudentsWithoutGit = false;
 
-const GIT_TASK_INDEX = 3;
-const POINTS_TASK_INDEX = 8;
-const LNAME_INDEX = 0;
-const FNAME_INDEX = 1;
-const GIT_USER_INDEX = 2;
 
-document.getElementById('files').addEventListener('change', parseFiles);
+
+
+document.getElementById('taskFiles').addEventListener('change', parseFiles);
+document.getElementById('userFiles').addEventListener('change', parsePeppiUsers);
 document.querySelector('#export').addEventListener('click', exportCsv);
 document.querySelector('#ordernames').addEventListener('click', setOrder);
 document.querySelector('#orderpoints').addEventListener('click', setOrder);
@@ -36,34 +34,40 @@ function parseFiles(e) {
     studentsWithoutGit = [];
     headers = [];
     taskCount = 0;
-    let files = [...e.currentTarget.files];
-
-    let usersFile = files.find(f => f.name == 'users.csv');
-    taskFiles = files.filter(f => f.name != 'users.csv')
+    taskFiles = [...e.currentTarget.files];
 
     taskFiles.sort((x, y) => x.name.localeCompare(y.name));
-
     taskQuantity = taskFiles.length;
-    usersExist = usersFile ? true : false;
-
-    //Prosessing users file first if it exists
-    if (usersFile) {
-        const reader = new FileReader();
-        reader.addEventListener('load', getUsers);
-        reader.readAsText(usersFile);
-    } else {
-        processTaskFiles();
-    }
 }
+
+function parsePeppiUsers(e){
+    // open the users file
+    let file = e.currentTarget.files[0];
+    let reader = new FileReader();
+    usersExist = true;
+    reader.addEventListener('load', getPeppiUsers);
+    reader.readAsText(file);
+    processTaskFiles();
+}
+
 
 /**
  * Parses the users from users file.
  */
-function getUsers(event) {
+function getPeppiUsers(event) {
+
+    const USERS_FILE_LNAME_INDEX = 0;
+    const USERS_FILE_FNAME_INDEX = 1;
+    const USERS_FILE_STUDENT_EMAIL_INDEX = 3;
+    const USERS_FILE_STUDENT_ID_INDEX = 4;
+
     let users = event.target.result;
     let userRows = users.split('\n');
+    
+    // skip the first row because it's the header
+    for (let i = 1; i < userRows.length; i++) {
+        const r = userRows[i];
 
-    userRows.forEach(r => {
         let userArray = r.split(',');
 
         //Omitting empty row
@@ -71,14 +75,14 @@ function getUsers(event) {
             return;
         }
 
-        let gitName = userArray[GIT_USER_INDEX]?.trim();
-        let name = userArray[LNAME_INDEX] + ' ' + userArray[FNAME_INDEX];
+        let studentEmail = userArray[USERS_FILE_STUDENT_EMAIL_INDEX]?.trim();
+        let name = userArray[USERS_FILE_LNAME_INDEX] + ' ' + userArray[USERS_FILE_FNAME_INDEX];
+        let studentId = userArray[USERS_FILE_STUDENT_ID_INDEX]?.trim();
 
-        let studentTarget = gitName.length > 0 ? studentRows : studentsWithoutGit;
-        studentTarget.push({ gitName, name, points: Array(taskQuantity).fill(0), sum: 0 });
-    });
+        studentRows.push({ name, studentEmail, studentId, points: Array(taskQuantity).fill(0), sum: 0 });
+    }
 
-    //Processing task files after users.csv is parsed
+    //Processing task files after peppiUsers.csv is parsed 
     processTaskFiles();
 }
 
@@ -97,6 +101,11 @@ function processTaskFiles() {
  * Parse single assignment file
  */
 function getTasks(event) {
+
+    const TASK_FILE_GITHUB_USERNAME_INDEX = 3;
+    const TASK_FILE_STUDENT_EMAIL_INDEX = 4;
+    const TASK_FILE_POINTS_TASK_INDEX = 8;    
+
     let taskContent = event.target.result;
     let rows = taskContent.replaceAll('"', '').split('\n');
 
@@ -104,6 +113,7 @@ function getTasks(event) {
 
     //Get the assignment name from first user row
     let name = rows[1].split(',')[0];
+    debugger
 
     //Add the assignment name to table headers
     headers.push(name);
@@ -117,19 +127,21 @@ function getTasks(event) {
         }
 
         //Get git username and points from the row.
-        let gitName = rowValues[GIT_TASK_INDEX]?.trim();
-        let p = Number(rowValues[POINTS_TASK_INDEX].trim());
+        let gitName = rowValues[TASK_FILE_GITHUB_USERNAME_INDEX]?.trim();
+        let studentEmail = rowValues[TASK_FILE_STUDENT_EMAIL_INDEX]?.trim();
+        let points = Number(rowValues[TASK_FILE_POINTS_TASK_INDEX].trim());
 
-        let student = studentRows.find(s => s.gitName == gitName);
+        let student = studentRows.find(s => s.studentEmail == studentEmail);
 
         //Update task points for exising student or add a new student.
         if (student) {
-            student.points[taskCount] = p;
-            student.sum += p;
+            student.points[taskCount] = points;
+            student.gitName = gitName;
+            student.sum += points;
         } else {
-            student = { gitName, name: '', points: Array(taskFiles.length).fill(0), sum: 0 };
-            student.points[taskCount] = p;
-            student.sum += p;
+            student = { gitName, name: '', studentEmail, studentId: null, points: Array(taskFiles.length).fill(0), sum: 0 };
+            student.points[taskCount] = points;
+            student.sum += points;
             studentRows.push(student);
         }
 
@@ -169,6 +181,8 @@ function createTable() {
             row.insertCell().textContent = student.name;
         }
         row.insertCell().textContent = student.gitName;
+        row.insertCell().textContent = student.studentEmail;
+        row.insertCell().textContent = student.studentId;
         row.insertCell().textContent = student.sum;
         student.points.forEach(p => row.insertCell().textContent = p);
     }
@@ -185,7 +199,10 @@ function createTable() {
     }
 
     thead.insertCell().textContent = 'Git name';
+    thead.insertCell().textContent = 'Student email';
+    thead.insertCell().textContent = 'Student id';
     thead.insertCell().textContent = 'Sum';
+    debugger
     headers.forEach(h => {
         thead.insertCell().textContent = h;
     })
